@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3001;
 
 const io = require("socket.io")(server, {
     cors: {
-        origin: "https://63453df4667057211533cc54--joyful-tapioca-e2ccda.netlify.app/",
+        origin: "https://joyful-tapioca-e2ccda.netlify.app/",
         methods: ["GET", "POST"],
     },
 });
