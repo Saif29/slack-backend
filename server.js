@@ -16,7 +16,7 @@ require("./connection");
 
 const server = require("http").createServer(app);
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const io = require("socket.io")(server, {
     cors: {
