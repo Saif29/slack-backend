@@ -180,6 +180,7 @@ io.on("connection", (socket) => {
         //     rooms[i] = roomsObject[i];
         // }
         // console.log("rooms", rooms)
+        console.log(roomsObject)
         res.json(roomsObject);
     });
 });
