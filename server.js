@@ -48,6 +48,12 @@ function sortByDate(messages) {
 io.on("connection", (socket) => {
     socket.emit("myId", socket.id);
 
+    socket.on("save-socket", async (email) => {
+        const user = await User.findOne({ email: email });
+        user.socket = socket.id;
+        await user.save();
+    });
+
     socket.on("new-user", async () => {
         const members = await User.find();
         io.emit("new-user", members);
@@ -133,28 +139,31 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-		socket.broadcast.emit("call-ended")
-	})
+        socket.broadcast.emit("call-ended");
+    });
 
     socket.on("get-socket", (room) => {
         socket.to(room).emit("get-socket");
-    })
+    });
 
     socket.on("send-socket", (socketToSend, room) => {
-        socket.to(room).emit("other-socket", socketToSend)
-    })
+        socket.to(room).emit("other-socket", socketToSend);
+    });
 
-	socket.on("call-user", (data) => {
-        io.to(data.socketToCall).emit("call-user", { signal: data.signalData, from: data.from })
-	})
+    socket.on("call-user", (data) => {
+        io.to(data.socketToCall).emit("call-user", {
+            signal: data.signalData,
+            from: data.from,
+        });
+    });
 
-	socket.on("answer-call", (data) => {
-		io.to(data.to).emit("call-accepted", data.signal)
-	})
+    socket.on("answer-call", (data) => {
+        io.to(data.to).emit("call-accepted", data.signal);
+    });
 
     socket.on("end-call", (room) => {
-        io.to(room.name).emit("ended-call")
-	})
+        io.to(room.name).emit("ended-call");
+    });
 
     app.delete("/logout", async (req, res) => {
         try {
@@ -180,7 +189,7 @@ io.on("connection", (socket) => {
         //     rooms[i] = roomsObject[i];
         // }
         // console.log("rooms", rooms)
-        console.log(roomsObject)
+        console.log(roomsObject);
         res.json(roomsObject);
     });
 });

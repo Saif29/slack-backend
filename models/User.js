@@ -31,6 +31,10 @@ const UserSchema = mongoose.Schema(
             type: String,
             default: "online",
         },
+        socket: {
+            type: String,
+            default: "",
+        },
     },
     { minimize: false }
 );
