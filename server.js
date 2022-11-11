@@ -16,11 +16,11 @@ require("./connection");
 
 const server = require("http").createServer(app);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3050;
 
 const io = require("socket.io")(server, {
     cors: {
-        origin: "https://slackclone1.netlify.app",
+        origin: "https://slackclone1.netlify.app/",
         methods: ["GET", "POST"],
     },
 });
@@ -142,27 +142,33 @@ io.on("connection", (socket) => {
         socket.broadcast.emit("call-ended");
     });
 
-    socket.on("get-socket", (room) => {
-        socket.to(room).emit("get-socket");
-    });
+    // socket.on("get-socket", async (person) => {
+    //     const user = await User.findOne({ email: person.email });
+    //     socket.to(room).emit("other-socket", socketToSend);
+    // });
 
-    socket.on("send-socket", (socketToSend, room) => {
-        socket.to(room).emit("other-socket", socketToSend);
-    });
+    // socket.on("send-socket", (socketToSend, room) => {
+    //     socket.to(room).emit("other-socket", socketToSend);
+    // });
 
-    socket.on("call-user", (data) => {
-        io.to(data.socketToCall).emit("call-user", {
+    socket.on("call-user", async (data) => {
+        const otherUser = await User.findOne({ email: data.userToCall.email });
+        io.to(otherUser.socket).emit("call-user", {
             signal: data.signalData,
-            from: data.from,
+            from: data.from_user,
+            from_socket: data.from_socket
         });
     });
 
     socket.on("answer-call", (data) => {
+        console.log(data.to)
         io.to(data.to).emit("call-accepted", data.signal);
     });
 
-    socket.on("end-call", (room) => {
-        io.to(room.name).emit("ended-call");
+    socket.on("end-call", (caller, mysocket) => {
+        io.to(caller).emit("ended-call");
+        io.to(mysocket).emit("ended-call");
+
     });
 
     app.delete("/logout", async (req, res) => {
