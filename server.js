@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3050;
 
 const io = require("socket.io")(server, {
     cors: {
-        origin: "https://slackclone1.netlify.app/",
+        origin: "https://slackclone1.netlify.app",
         methods: ["GET", "POST"],
     },
 });
