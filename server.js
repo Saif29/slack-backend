@@ -21,6 +21,7 @@ const PORT = process.env.PORT || 3050;
 const io = require("socket.io")(server, {
     cors: {
         origin: "https://slackclone1.netlify.app",
+        //origin: "http://localhost:3000",
         methods: ["GET", "POST"],
     },
 });
@@ -165,10 +166,8 @@ io.on("connection", (socket) => {
         io.to(data.to).emit("call-accepted", data.signal);
     });
 
-    socket.on("end-call", (caller, mysocket) => {
+    socket.on("end-call", (caller) => {
         io.to(caller).emit("ended-call");
-        io.to(mysocket).emit("ended-call");
-
     });
 
     app.delete("/logout", async (req, res) => {
